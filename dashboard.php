@@ -2,24 +2,37 @@
 
 session_start();
 
-if(!isset($_SESSION['username'])){
+if(!isset($_SESSION['user'])){
 
     header("Location: login.php");
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "greenhouse_db");
+include 'config.php';
 
-if($conn->connect_error){
+// GET LAST 50 RECORDS
+$result = $conn->query(
+    "SELECT * FROM sensor_data
+     ORDER BY id DESC
+     LIMIT 50"
+);
 
-    die("Connection Failed: " . $conn->connect_error);
-}
+// GET LATEST DATA
+$latestQuery = $conn->query(
+    "SELECT * FROM sensor_data
+     ORDER BY id DESC
+     LIMIT 1"
+);
 
-$result = $conn->query("SELECT * FROM sensor_data ORDER BY id DESC LIMIT 50");
+$latest = $latestQuery->fetch_assoc();
 
-$latest = $conn->query("SELECT * FROM sensor_data ORDER BY id DESC LIMIT 1")->fetch_assoc();
+// TOTAL RECORDS
+$totalQuery = $conn->query(
+    "SELECT COUNT(*) as total
+     FROM sensor_data"
+);
 
-$total = $conn->query("SELECT COUNT(*) as total FROM sensor_data")->fetch_assoc();
+$total = $totalQuery->fetch_assoc();
 
 ?>
 
