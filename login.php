@@ -1,34 +1,58 @@
 <?php
+
 session_start();
 
-$conn = new mysqli("localhost", "root", "", "greenhouse_db");
+include 'config.php';
 
 if(isset($_POST['login'])){
 
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users
-            WHERE username='$username'
-            AND password='$password'";
+    // PREPARED STATEMENT
+    $stmt = $conn->prepare(
+        "SELECT * FROM users
+         WHERE username = ?"
+    );
 
-    $result = $conn->query($sql);
+    $stmt->bind_param("s", $username);
+
+    $stmt->execute();
+
+    $result = $stmt->get_result();
 
     if($result->num_rows > 0){
 
-        $_SESSION['username'] = $username;
+        $row = $result->fetch_assoc();
 
-        header("Location: dashboard.php");
+        // VERIFY PASSWORD
+        if(password_verify($password, $row['password'])){
 
-    }else{
-        echo "Invalid account";
+            $_SESSION['user'] = $username;
+
+            header("Location: dashboard.php");
+            exit();
+
+        } else {
+
+            echo "Invalid password";
+        }
+
+    } else {
+
+        echo "User not found";
     }
+
+    $stmt->close();
 }
+
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Greenhouse Login</title>
 
 <style>
@@ -60,6 +84,7 @@ input{
     margin-top:10px;
     border:1px solid #ccc;
     border-radius:5px;
+    box-sizing:border-box;
 }
 
 button{
@@ -72,9 +97,15 @@ button{
     margin-top:15px;
     border-radius:5px;
     font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#388e3c;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -85,9 +116,17 @@ button{
 
 <form method="POST">
 
-<input type="text" name="username" placeholder="Username" required>
+<input
+type="text"
+name="username"
+placeholder="Username"
+required>
 
-<input type="password" name="password" placeholder="Password" required>
+<input
+type="password"
+name="password"
+placeholder="Password"
+required>
 
 <button type="submit" name="login">
 Login
