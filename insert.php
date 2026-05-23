@@ -1,20 +1,13 @@
 <?php
 
-// DATABASE CONNECTION
-$conn = new mysqli("localhost", "root", "", "greenhouse_db");
-
-// CHECK CONNECTION
-if ($conn->connect_error) {
-
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'config.php';
 
 // CHECK IF VALUES EXIST
-if(
+if (
     isset($_GET['temperature']) &&
     isset($_GET['humidity']) &&
     isset($_GET['fan_status'])
-){
+) {
 
     // GET VALUES FROM ESP32
     $temperature = $_GET['temperature'];
@@ -29,7 +22,7 @@ if(
     ('$temperature', '$humidity', '$fan_status')";
 
     // EXECUTE QUERY
-    if($conn->query($sql) === TRUE){
+    if ($conn->query($sql) === TRUE) {
 
         echo "Data inserted successfully";
 
