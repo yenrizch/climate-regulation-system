@@ -1,7 +1,7 @@
 <?php
 $host = "kodama.proxy.rlwy.net";
 $user = "root";
-$pass = getenv("MYSQLPASSWORD");
+$pass = getenv("DB_PASS");
 $db   = "railway";
 $port = "29496";
 
