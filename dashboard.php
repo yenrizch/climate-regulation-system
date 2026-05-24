@@ -1,5 +1,7 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Manila');
+
 if(!isset($_SESSION['username'])){
     header("Location: login.php");
     exit();
@@ -96,7 +98,7 @@ table tr:hover{background:#f1f8e9;}
             <th>Temperature</th>
             <th>Humidity</th>
             <th>Fan Status</th>
-            <th>Time</th>
+            <th>Time (PH)</th>
         </tr>
         <?php if(count($rows) > 0): ?>
             <?php foreach($rows as $row): ?>
@@ -111,7 +113,7 @@ table tr:hover{background:#f1f8e9;}
                         <span class='badge badge-off'>OFF</span>
                     <?php endif; ?>
                 </td>
-                <td><?= $row['time']; ?></td>
+                <td><?= date('Y-m-d h:i:s A', strtotime($row['time']) + (8 * 3600)); ?></td>
             </tr>
             <?php endforeach; ?>
         <?php else: ?>
