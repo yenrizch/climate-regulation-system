@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if(!isset($_SESSION['username'])){
@@ -9,15 +8,14 @@ if(!isset($_SESSION['username'])){
 
 require 'config.php';
 
-$result  = $conn->query("SELECT * FROM climate_data ORDER BY id DESC LIMIT 50");
-$rows    = $result->fetchAll(PDO::FETCH_ASSOC);
+$result = $conn->query("SELECT * FROM climate_data ORDER BY id DESC LIMIT 50");
+$rows = $result->fetchAll(PDO::FETCH_ASSOC);
 
 $latest_result = $conn->query("SELECT * FROM climate_data ORDER BY id DESC LIMIT 1");
-$latest        = $latest_result->fetch(PDO::FETCH_ASSOC);
+$latest = $latest_result->fetch(PDO::FETCH_ASSOC);
 
 $total_result = $conn->query("SELECT COUNT(*) as total FROM climate_data");
-$total        = $total_result->fetch(PDO::FETCH_ASSOC);
-
+$total = $total_result->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -78,19 +76,16 @@ table tr:hover{background:#f1f8e9;}
 </div>
 
 <div class="cards">
-
     <div class="card">
         <h3>Temperature</h3>
         <h1><?= isset($latest['temperature']) ? $latest['temperature'] : 'N/A'; ?>°C</h1>
         <p>Live greenhouse temperature</p>
     </div>
-
     <div class="card">
         <h3>Humidity</h3>
         <h1><?= isset($latest['humidity']) ? $latest['humidity'] : 'N/A'; ?>%</h1>
         <p>Current air moisture</p>
     </div>
-
     <div class="card">
         <h3>Fan Status</h3>
         <h1 class="<?= isset($latest['fan_status']) ? strtolower($latest['fan_status']) : ''; ?>">
@@ -98,13 +93,11 @@ table tr:hover{background:#f1f8e9;}
         </h1>
         <p>Automatic ventilation</p>
     </div>
-
     <div class="card">
         <h3>Total Records</h3>
         <h1><?= $total['total']; ?></h1>
         <p>Database entries collected</p>
     </div>
-
 </div>
 
 <div class="table-container">
@@ -119,7 +112,6 @@ table tr:hover{background:#f1f8e9;}
             <th>Fan Status</th>
             <th>Time</th>
         </tr>
-
         <?php if(count($rows) > 0): ?>
             <?php foreach($rows as $row): ?>
             <tr>
@@ -143,7 +135,6 @@ table tr:hover{background:#f1f8e9;}
                 </td>
             </tr>
         <?php endif; ?>
-
     </table>
 </div>
 
