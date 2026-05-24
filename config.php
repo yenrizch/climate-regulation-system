@@ -8,7 +8,7 @@ $port = getenv("MYSQLPORT");
 
 try {
     $conn = new PDO(
-        "mysql:host=$host;port=$port;dbname=$db",
+        "mysql:host=$host;port=$port;dbname=$db;charset=utf8",
         $user,
         $pass
     );
