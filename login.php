@@ -1,58 +1,35 @@
 <?php
-
 session_start();
 
-include 'config.php';
+require 'config.php';
 
 if(isset($_POST['login'])){
 
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // PREPARED STATEMENT
-    $stmt = $conn->prepare(
-        "SELECT * FROM users
-         WHERE username = ?"
-    );
+    $sql = "SELECT * FROM users
+            WHERE username='$username'
+            AND password='$password'";
 
-    $stmt->bind_param("s", $username);
+    $result = mysqli_query($conn, $sql);
 
-    $stmt->execute();
+    if(mysqli_num_rows($result) > 0){
 
-    $result = $stmt->get_result();
+        $_SESSION['username'] = $username;
 
-    if($result->num_rows > 0){
+        header("Location: dashboard.php");
+        exit();
 
-        $row = $result->fetch_assoc();
-
-        // VERIFY PASSWORD
-        if(password_verify($password, $row['password'])){
-
-            $_SESSION['user'] = $username;
-
-            header("Location: dashboard.php");
-            exit();
-
-        } else {
-
-            echo "Invalid password";
-        }
-
-    } else {
-
-        echo "User not found";
+    }else{
+        $error = "Invalid account";
     }
-
-    $stmt->close();
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Greenhouse Login</title>
 
 <style>
@@ -84,7 +61,6 @@ input{
     margin-top:10px;
     border:1px solid #ccc;
     border-radius:5px;
-    box-sizing:border-box;
 }
 
 button{
@@ -97,15 +73,15 @@ button{
     margin-top:15px;
     border-radius:5px;
     font-size:16px;
-    cursor:pointer;
 }
 
-button:hover{
-    background:#388e3c;
+.error{
+    color:red;
+    text-align:center;
+    margin-top:10px;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -114,19 +90,13 @@ button:hover{
 
 <h2>Lettuce Greenhouse</h2>
 
+<?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
+
 <form method="POST">
 
-<input
-type="text"
-name="username"
-placeholder="Username"
-required>
+<input type="text" name="username" placeholder="Username" required>
 
-<input
-type="password"
-name="password"
-placeholder="Password"
-required>
+<input type="password" name="password" placeholder="Password" required>
 
 <button type="submit" name="login">
 Login
