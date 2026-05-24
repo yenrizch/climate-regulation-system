@@ -1,10 +1,10 @@
 <?php
 
-$host = "mysql.railway.internal";
+$host = "kodama.proxy.rlwy.net";
 $user = "root";
 $password = "GdEtSmIIVmxVJMJgIShDkOAAgCVmFUlx";
 $database = "railway";
-$port = "3306";
+$port = "46152";
 
 $conn = mysqli_connect($host, $user, $password, $database, $port);
 
