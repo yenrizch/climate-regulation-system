@@ -1,15 +1,15 @@
 <?php
 
-$host = getenv("MYSQLHOST");
-$user = getenv("MYSQLUSER");
-$password = getenv("MYSQLPASSWORD");
-$database = getenv("MYSQLDATABASE");
-$port = getenv("MYSQLPORT");
+$host = "kodama.proxy.rlwy.net";
+$user = "root";
+$password = "GdEtSmIIVmxVJMJgIShDkOAAgCVmFUlx";
+$database = "railway";
+$port = 46152;
 
 $conn = mysqli_connect($host, $user, $password, $database, $port);
 
 if (!$conn) {
-    die("Connection failed");
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 ?>
