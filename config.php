@@ -1,9 +1,9 @@
 <?php
-$host = getenv("MYSQLHOST");
-$user = getenv("MYSQLUSER");
+$host = "kodama.proxy.rlwy.net";
+$user = "root";
 $pass = getenv("MYSQLPASSWORD");
-$db   = getenv("MYSQLDATABASE");
-$port = getenv("MYSQLPORT");
+$db   = "railway";
+$port = "29496";
 
 try {
     $conn = new PDO(
