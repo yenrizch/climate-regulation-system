@@ -1,12 +1,10 @@
 <?php
 session_start();
-
 require 'config.php';
 
 $error = "";
 
 if(isset($_POST['login'])){
-
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -75,18 +73,14 @@ button:hover{
 </style>
 </head>
 <body>
-
 <div class="login-box">
     <h2>🥬 Lettuce Greenhouse</h2>
-
     <?php if($error != "") echo "<p class='error'>$error</p>"; ?>
-
     <form method="POST">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit" name="login">Login</button>
     </form>
 </div>
-
 </body>
 </html>
