@@ -1,15 +1,18 @@
 <?php
+$host = getenv("MYSQLHOST");
+$user = getenv("MYSQLUSER");
+$pass = getenv("MYSQLPASSWORD");
+$db   = getenv("MYSQLDATABASE");
+$port = getenv("MYSQLPORT");
 
-$host = "kodama.proxy.rlwy.net";
-$user = "root";
-$password = "GdEtSmIIVmxVJMJgIShDkOAAgCVmFUlx";
-$database = "railway";
-$port = "46152";
-
-$conn = mysqli_connect($host, $user, $password, $database, $port);
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+try {
+    $conn = new PDO(
+        "mysql:host=$host;port=$port;dbname=$db;charset=utf8",
+        $user,
+        $pass
+    );
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
-
 ?>
