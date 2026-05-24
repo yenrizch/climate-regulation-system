@@ -39,7 +39,7 @@ foreach($graph_rows as $g){
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="5">
+<meta http-equiv="refresh" content="10">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lettuce Greenhouse — Climate Monitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -425,7 +425,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="panel" style="margin-bottom:20px;">
             <div class="panel-header">
                 <h3>📈 Temperature & Humidity — Last 20 Readings</h3>
-                <span>Auto-refresh every 5s</span>
+                <span>Auto-refresh every 10s</span>
             </div>
             <div class="panel-body">
                 <div class="chart-wrap">
