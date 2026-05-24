@@ -2,37 +2,20 @@
 
 session_start();
 
-if(!isset($_SESSION['user'])){
-
+if(!isset($_SESSION['username'])){
     header("Location: login.php");
     exit();
 }
 
-include 'config.php';
+require 'config.php';
 
-// GET LAST 50 RECORDS
-$result = $conn->query(
-    "SELECT * FROM sensor_data
-     ORDER BY id DESC
-     LIMIT 50"
-);
+$result = mysqli_query($conn, "SELECT * FROM climate_data ORDER BY id DESC LIMIT 50");
 
-// GET LATEST DATA
-$latestQuery = $conn->query(
-    "SELECT * FROM sensor_data
-     ORDER BY id DESC
-     LIMIT 1"
-);
+$latest_result = mysqli_query($conn, "SELECT * FROM climate_data ORDER BY id DESC LIMIT 1");
+$latest = mysqli_fetch_assoc($latest_result);
 
-$latest = $latestQuery->fetch_assoc();
-
-// TOTAL RECORDS
-$totalQuery = $conn->query(
-    "SELECT COUNT(*) as total
-     FROM sensor_data"
-);
-
-$total = $totalQuery->fetch_assoc();
+$total_result = mysqli_query($conn, "SELECT COUNT(*) as total FROM climate_data");
+$total = mysqli_fetch_assoc($total_result);
 
 ?>
 
@@ -69,8 +52,6 @@ body{
 
     padding:25px;
 }
-
-/* HEADER */
 
 .header{
 
@@ -153,8 +134,6 @@ body{
     background:#b71c1c;
 }
 
-/* CARDS */
-
 .cards{
 
     display:grid;
@@ -223,8 +202,6 @@ body{
     margin-top:5px;
 }
 
-/* STATUS COLORS */
-
 .on{
 
     color:#ff6f00;
@@ -234,8 +211,6 @@ body{
 
     color:#2e7d32;
 }
-
-/* TABLE */
 
 .table-container{
 
@@ -292,8 +267,6 @@ table tr:hover{
     background:#f1f8e9;
 }
 
-/* BADGES */
-
 .badge{
 
     padding:6px 12px;
@@ -319,8 +292,6 @@ table tr:hover{
     color:#2e7d32;
 }
 
-/* FOOTER */
-
 .footer{
 
     margin-top:25px;
@@ -331,8 +302,6 @@ table tr:hover{
 
     font-size:14px;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:768px){
 
@@ -360,8 +329,6 @@ table tr:hover{
 
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
 
     <div class="logo-section">
@@ -386,55 +353,45 @@ table tr:hover{
 
 </div>
 
-<!-- CARDS -->
-
 <div class="cards">
-
-    <!-- TEMPERATURE -->
 
     <div class="card">
 
         <h3>Temperature</h3>
 
         <h1>
-            <?= $latest['temperature']; ?>°C
+            <?= isset($latest['temperature']) ? $latest['temperature'] : 'N/A'; ?>°C
         </h1>
 
         <p>Live greenhouse temperature</p>
 
     </div>
 
-    <!-- HUMIDITY -->
-
     <div class="card">
 
         <h3>Humidity</h3>
 
         <h1>
-            <?= $latest['humidity']; ?>%
+            <?= isset($latest['humidity']) ? $latest['humidity'] : 'N/A'; ?>%
         </h1>
 
         <p>Current air moisture</p>
 
     </div>
 
-    <!-- FAN STATUS -->
-
     <div class="card">
 
         <h3>Fan Status</h3>
 
-        <h1 class="<?= strtolower($latest['fan_status']); ?>">
+        <h1 class="<?= isset($latest['fan_status']) ? strtolower($latest['fan_status']) : ''; ?>">
 
-            <?= $latest['fan_status']; ?>
+            <?= isset($latest['fan_status']) ? $latest['fan_status'] : 'N/A'; ?>
 
         </h1>
 
         <p>Automatic ventilation</p>
 
     </div>
-
-    <!-- TOTAL RECORDS -->
 
     <div class="card">
 
@@ -451,8 +408,6 @@ table tr:hover{
     </div>
 
 </div>
-
-<!-- TABLE -->
 
 <div class="table-container">
 
@@ -478,7 +433,9 @@ table tr:hover{
 
         </tr>
 
-        <?php while($row = $result->fetch_assoc()){ ?>
+        <?php if(mysqli_num_rows($result) > 0): ?>
+
+        <?php while($row = mysqli_fetch_assoc($result)): ?>
 
         <tr>
 
@@ -490,18 +447,11 @@ table tr:hover{
 
             <td>
 
-                <?php
-
-                if($row['fan_status'] == "ON"){
-
-                    echo "<span class='badge badge-on'>ON</span>";
-
-                }else{
-
-                    echo "<span class='badge badge-off'>OFF</span>";
-                }
-
-                ?>
+                <?php if($row['fan_status'] == "ON"): ?>
+                    <span class='badge badge-on'>ON</span>
+                <?php else: ?>
+                    <span class='badge badge-off'>OFF</span>
+                <?php endif; ?>
 
             </td>
 
@@ -509,13 +459,21 @@ table tr:hover{
 
         </tr>
 
-        <?php } ?>
+        <?php endwhile; ?>
+
+        <?php else: ?>
+
+        <tr>
+            <td colspan="5" style="text-align:center; padding:30px; color:#777;">
+                No data yet. Waiting for ESP32 to send data.
+            </td>
+        </tr>
+
+        <?php endif; ?>
 
     </table>
 
 </div>
-
-<!-- FOOTER -->
 
 <div class="footer">
 
@@ -528,8 +486,4 @@ table tr:hover{
 </body>
 </html>
 
-<?php
-
-$conn->close();
-
-?>
+<?php mysqli_close($conn); ?>
