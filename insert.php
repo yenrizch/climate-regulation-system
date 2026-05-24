@@ -12,25 +12,16 @@ if(
     $humidity    = $_GET['humidity'];
     $fan_status  = $_GET['fan_status'];
 
-    $sql = "INSERT INTO climate_data
-    (temperature, humidity, fan_status)
-    VALUES
-    ('$temperature', '$humidity', '$fan_status')";
+    $sql = $conn->prepare("INSERT INTO climate_data (temperature, humidity, fan_status) VALUES (?, ?, ?)");
 
-    if(mysqli_query($conn, $sql)){
-
+    if($sql->execute([$temperature, $humidity, $fan_status])){
         echo "Data inserted successfully";
-
     } else {
-
-        echo "Database Error: " . mysqli_error($conn);
+        echo "Database Error";
     }
 
 } else {
-
     echo "Missing parameters";
 }
-
-mysqli_close($conn);
 
 ?>
