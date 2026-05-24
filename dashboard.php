@@ -24,36 +24,91 @@ $total = $total_result->fetch(PDO::FETCH_ASSOC);
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#e8f5e9,#f1f8e9);min-height:100vh;padding:25px;}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;}
+
+/* LIGHT MODE (default) */
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#e8f5e9,#f1f8e9);
+    min-height:100vh;
+    padding:25px;
+    transition:all 0.3s ease;
+}
+
+/* DARK MODE */
+body.dark{
+    background:linear-gradient(135deg,#0d1f0d,#1a2e1a);
+    color:#e0e0e0;
+}
+
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;flex-wrap:wrap;gap:15px;}
 .logo-section{display:flex;align-items:center;gap:15px;}
 .logo{width:70px;height:70px;background:linear-gradient(135deg,#2e7d32,#66bb6a);border-radius:20px;display:flex;justify-content:center;align-items:center;color:white;font-size:32px;box-shadow:0 8px 20px rgba(0,0,0,0.2);}
 .title h1{color:#1b5e20;font-size:32px;font-weight:700;}
+body.dark .title h1{color:#81c784;}
 .title p{color:#558b2f;font-size:14px;}
+body.dark .title p{color:#a5d6a7;}
+
+.header-right{display:flex;align-items:center;gap:12px;}
+
+/* DARK MODE TOGGLE */
+.toggle-btn{
+    background:#388e3c;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:12px;
+    font-weight:600;
+    cursor:pointer;
+    font-size:14px;
+    font-family:'Poppins',sans-serif;
+    transition:0.3s;
+}
+.toggle-btn:hover{background:#2e7d32;}
+body.dark .toggle-btn{background:#1b5e20;}
+
 .logout-btn{background:#d32f2f;color:white;text-decoration:none;padding:12px 18px;border-radius:12px;font-weight:600;transition:0.3s;}
 .logout-btn:hover{background:#b71c1c;}
+
+/* CARDS */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:30px;}
-.card{background:white;border-radius:20px;padding:25px;box-shadow:0 8px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;}
+.card{background:white;border-radius:20px;padding:25px;box-shadow:0 8px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;transition:0.3s;}
+body.dark .card{background:#1e2f1e;box-shadow:0 8px 20px rgba(0,0,0,0.4);}
 .card::before{content:"";position:absolute;top:0;left:0;width:100%;height:6px;background:linear-gradient(90deg,#2e7d32,#81c784);}
 .card h3{color:#558b2f;margin-bottom:10px;font-size:16px;}
+body.dark .card h3{color:#a5d6a7;}
 .card h1{color:#1b5e20;font-size:38px;font-weight:700;}
+body.dark .card h1{color:#c8e6c9;}
 .card p{color:#777;margin-top:5px;}
+body.dark .card p{color:#aaa;}
+
 .on{color:#ff6f00;}
 .off{color:#2e7d32;}
-.table-container{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+body.dark .off{color:#66bb6a;}
+
+/* TABLE */
+.table-container{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.08);transition:0.3s;}
+body.dark .table-container{background:#1e2f1e;box-shadow:0 8px 20px rgba(0,0,0,0.4);}
 .table-header{background:linear-gradient(135deg,#2e7d32,#66bb6a);color:white;padding:20px;}
 .table-header h2{font-size:22px;}
 table{width:100%;border-collapse:collapse;}
 table th{background:#388e3c;color:white;padding:15px;text-align:left;}
-table td{padding:14px;border-bottom:1px solid #eee;}
+body.dark table th{background:#1b5e20;}
+table td{padding:14px;border-bottom:1px solid #eee;color:#333;}
+body.dark table td{border-bottom:1px solid #2d4a2d;color:#e0e0e0;}
 table tr:hover{background:#f1f8e9;}
+body.dark table tr:hover{background:#243d24;}
+
 .badge{padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;}
 .badge-on{background:#fff3e0;color:#ef6c00;}
 .badge-off{background:#e8f5e9;color:#2e7d32;}
+body.dark .badge-off{background:#1b3a1b;color:#81c784;}
+
 .footer{margin-top:25px;text-align:center;color:#777;font-size:14px;}
+body.dark .footer{color:#aaa;}
 </style>
 </head>
 <body>
+
 <div class="header">
     <div class="logo-section">
         <div class="logo">🥬</div>
@@ -62,8 +117,12 @@ table tr:hover{background:#f1f8e9;}
             <p>Real-Time Climate Monitoring System</p>
         </div>
     </div>
-    <a href="logout.php" class="logout-btn">Logout</a>
+    <div class="header-right">
+        <button class="toggle-btn" onclick="toggleDark()" id="themeBtn">🌙 Dark Mode</button>
+        <a href="logout.php" class="logout-btn">Logout</a>
+    </div>
 </div>
+
 <div class="cards">
     <div class="card">
         <h3>Temperature</h3>
@@ -88,6 +147,7 @@ table tr:hover{background:#f1f8e9;}
         <p>Database entries collected</p>
     </div>
 </div>
+
 <div class="table-container">
     <div class="table-header">
         <h2>Live Greenhouse Data</h2>
@@ -125,8 +185,30 @@ table tr:hover{background:#f1f8e9;}
         <?php endif; ?>
     </table>
 </div>
+
 <div class="footer">
     <p>Lettuce Greenhouse Monitoring System © 2026</p>
 </div>
+
+<script>
+// Check kung naa saved preference ang user
+if(localStorage.getItem('theme') === 'dark'){
+    document.body.classList.add('dark');
+    document.getElementById('themeBtn').textContent = '☀️ Light Mode';
+}
+
+function toggleDark(){
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('themeBtn');
+    if(document.body.classList.contains('dark')){
+        btn.textContent = '☀️ Light Mode';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        btn.textContent = '🌙 Dark Mode';
+        localStorage.setItem('theme', 'light');
+    }
+}
+</script>
+
 </body>
 </html>
