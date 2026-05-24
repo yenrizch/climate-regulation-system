@@ -1,5 +1,4 @@
 <?php
-
 require 'config.php';
 
 if(
@@ -7,7 +6,6 @@ if(
     isset($_GET['humidity']) &&
     isset($_GET['fan_status'])
 ){
-
     $temperature = $_GET['temperature'];
     $humidity    = $_GET['humidity'];
     $fan_status  = $_GET['fan_status'];
@@ -19,9 +17,7 @@ if(
     } else {
         echo "Database Error";
     }
-
 } else {
     echo "Missing parameters";
 }
-
 ?>
