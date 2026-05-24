@@ -1,34 +1,29 @@
 <?php
 
-include 'config.php';
+require 'config.php';
 
-// CHECK IF VALUES EXIST
-if (
+if(
     isset($_GET['temperature']) &&
     isset($_GET['humidity']) &&
     isset($_GET['fan_status'])
-) {
+){
 
-    // GET VALUES FROM ESP32
     $temperature = $_GET['temperature'];
-    $humidity = $_GET['humidity'];
-    $fan_status = $_GET['fan_status'];
+    $humidity    = $_GET['humidity'];
+    $fan_status  = $_GET['fan_status'];
 
-    // INSERT DATA
-    $sql = "INSERT INTO sensor_data
+    $sql = "INSERT INTO climate_data
     (temperature, humidity, fan_status)
-
     VALUES
     ('$temperature', '$humidity', '$fan_status')";
 
-    // EXECUTE QUERY
-    if ($conn->query($sql) === TRUE) {
+    if(mysqli_query($conn, $sql)){
 
         echo "Data inserted successfully";
 
     } else {
 
-        echo "Database Error: " . $conn->error;
+        echo "Database Error: " . mysqli_error($conn);
     }
 
 } else {
@@ -36,7 +31,6 @@ if (
     echo "Missing parameters";
 }
 
-// CLOSE CONNECTION
-$conn->close();
+mysqli_close($conn);
 
 ?>
