@@ -14,7 +14,6 @@ $latest = $latest_result->fetch(PDO::FETCH_ASSOC);
 $total_result = $conn->query("SELECT COUNT(*) as total FROM climate_data");
 $total = $total_result->fetch(PDO::FETCH_ASSOC);
 
-// HISTORY: last 24 hours, 1 record per hour
 $history_result = $conn->query("
     SELECT * FROM climate_data 
     WHERE time >= NOW() - INTERVAL 24 HOUR 
@@ -22,7 +21,6 @@ $history_result = $conn->query("
 ");
 $history_rows = $history_result->fetchAll(PDO::FETCH_ASSOC);
 
-// GRAPH DATA: last 20 records
 $graph_result = $conn->query("SELECT * FROM climate_data ORDER BY id DESC LIMIT 20");
 $graph_rows = array_reverse($graph_result->fetchAll(PDO::FETCH_ASSOC));
 
@@ -85,120 +83,70 @@ body.dark{
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;transition:all 0.3s;}
-
-/* SIDEBAR */
 .sidebar{
-    width:260px;
-    background:var(--sidebar);
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    padding:30px 0;
-    position:fixed;
-    top:0;left:0;
-    z-index:100;
-    transition:0.3s;
+    width:260px;background:var(--sidebar);min-height:100vh;
+    display:flex;flex-direction:column;padding:30px 0;
+    position:fixed;top:0;left:0;z-index:100;transition:0.3s;
 }
-.sidebar-logo{
-    padding:0 25px 30px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-}
+.sidebar-logo{padding:0 25px 30px;border-bottom:1px solid rgba(255,255,255,0.1);}
 .sidebar-logo h2{color:#fff;font-size:18px;font-weight:700;line-height:1.3;}
 .sidebar-logo p{color:#95d5b2;font-size:12px;margin-top:4px;}
 .sidebar-logo .logo-icon{font-size:36px;margin-bottom:10px;}
 .sidebar-nav{padding:20px 0;flex:1;}
 .nav-item{
     display:flex;align-items:center;gap:12px;
-    padding:13px 25px;
-    color:rgba(255,255,255,0.65);
-    cursor:pointer;
-    transition:0.2s;
-    font-size:14px;
-    font-weight:500;
+    padding:13px 25px;color:rgba(255,255,255,0.65);
+    cursor:pointer;transition:0.2s;font-size:14px;font-weight:500;
     border-left:3px solid transparent;
 }
 .nav-item:hover,.nav-item.active{
-    background:rgba(255,255,255,0.08);
-    color:#fff;
+    background:rgba(255,255,255,0.08);color:#fff;
     border-left:3px solid var(--accent2);
 }
 .nav-item .icon{font-size:18px;width:22px;text-align:center;}
 .sidebar-bottom{padding:20px 25px;border-top:1px solid rgba(255,255,255,0.1);}
 .logout-btn{
     display:flex;align-items:center;gap:10px;
-    color:rgba(255,255,255,0.65);
-    text-decoration:none;
-    font-size:14px;font-weight:500;
-    padding:10px 0;
-    transition:0.2s;
+    color:rgba(255,255,255,0.65);text-decoration:none;
+    font-size:14px;font-weight:500;padding:10px 0;transition:0.2s;
 }
 .logout-btn:hover{color:#ff6b6b;}
-
-/* MAIN */
 .main{margin-left:260px;flex:1;padding:30px;min-height:100vh;}
-
-/* TOP BAR */
 .topbar{
     display:flex;justify-content:space-between;align-items:center;
-    margin-bottom:30px;
-    flex-wrap:wrap;gap:15px;
+    margin-bottom:30px;flex-wrap:wrap;gap:15px;
 }
 .topbar-left h1{font-size:24px;font-weight:700;color:var(--text);}
 .topbar-left p{font-size:13px;color:var(--text3);margin-top:3px;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
-
 .theme-btn{
-    background:var(--card);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:10px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:13px;
-    font-family:'Inter',sans-serif;
-    font-weight:500;
-    transition:0.2s;
+    background:var(--card);border:1px solid var(--border);
+    color:var(--text);padding:10px 16px;border-radius:10px;
+    cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;
+    font-weight:500;transition:0.2s;
 }
 .theme-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
-
 .notif-btn{
-    position:relative;
-    background:var(--card);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:10px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:13px;
-    font-family:'Inter',sans-serif;
-    font-weight:500;
-    transition:0.2s;
+    position:relative;background:var(--card);border:1px solid var(--border);
+    color:var(--text);padding:10px 16px;border-radius:10px;cursor:pointer;
+    font-size:13px;font-family:'Inter',sans-serif;font-weight:500;transition:0.2s;
 }
 .notif-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
 .notif-badge{
     position:absolute;top:-6px;right:-6px;
-    background:#e53e3e;color:#fff;
-    border-radius:50%;width:18px;height:18px;
-    font-size:10px;font-weight:700;
+    background:#e53e3e;color:#fff;border-radius:50%;
+    width:18px;height:18px;font-size:10px;font-weight:700;
     display:flex;align-items:center;justify-content:center;
 }
-
-/* CARDS */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px;}
 .card{
-    background:var(--card);
-    border-radius:16px;
-    padding:24px;
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    position:relative;
-    overflow:hidden;
-    transition:0.3s;
+    background:var(--card);border-radius:16px;padding:24px;
+    box-shadow:var(--shadow);border:1px solid var(--border);
+    position:relative;overflow:hidden;transition:0.3s;
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.12);}
 .card-icon{
-    width:48px;height:48px;
-    border-radius:12px;
+    width:48px;height:48px;border-radius:12px;
     display:flex;align-items:center;justify-content:center;
     font-size:22px;margin-bottom:16px;
 }
@@ -211,116 +159,82 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .card-value.fan-on{color:var(--on);}
 .card-value.fan-off{color:var(--off);}
 .card-sub{font-size:12px;color:var(--text3);margin-top:8px;}
-.card-bar{
-    position:absolute;bottom:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--accent),var(--accent2));
-}
-
-/* GRID LAYOUT */
+.card-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:30px;}
 .grid-2 .full{grid-column:1/-1;}
 @media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
-
-/* PANELS */
 .panel{
-    background:var(--card);
-    border-radius:16px;
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    overflow:hidden;
-    transition:0.3s;
+    background:var(--card);border-radius:16px;
+    box-shadow:var(--shadow);border:1px solid var(--border);
+    overflow:hidden;transition:0.3s;
 }
 .panel-header{
-    padding:18px 24px;
-    border-bottom:1px solid var(--border);
+    padding:18px 24px;border-bottom:1px solid var(--border);
     display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:10px;
 }
 .panel-header h3{font-size:15px;font-weight:700;color:var(--text);}
 .panel-header span{font-size:12px;color:var(--text3);}
 .panel-body{padding:20px 24px;}
-
-/* CHART */
 .chart-wrap{position:relative;height:220px;}
-
-/* TABLE */
 .data-table{width:100%;border-collapse:collapse;}
 .data-table th{
-    padding:12px 16px;
-    text-align:left;
-    font-size:11px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:0.8px;
-    color:var(--text3);
-    border-bottom:2px solid var(--border);
+    padding:12px 16px;text-align:left;font-size:11px;
+    font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
+    color:var(--text3);border-bottom:2px solid var(--border);
 }
 .data-table td{
-    padding:13px 16px;
-    font-size:13px;
-    color:var(--text);
-    border-bottom:1px solid var(--border);
+    padding:13px 16px;font-size:13px;
+    color:var(--text);border-bottom:1px solid var(--border);
 }
 .data-table tr:last-child td{border-bottom:none;}
 .data-table tr:hover td{background:var(--bg3);}
 .badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;}
 .badge-on{background:var(--badge-on-bg);color:var(--on);}
 .badge-off{background:var(--badge-off-bg);color:var(--off);}
-
-/* NOTIFICATION PANEL */
+.export-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 16px;border-radius:8px;font-size:12px;
+    font-weight:600;text-decoration:none;transition:0.2s;
+    font-family:'Inter',sans-serif;
+}
+.export-btn-csv{background:#2e7d32;color:#fff;}
+.export-btn-csv:hover{background:#1b5e20;color:#fff;}
+.export-btn-pdf{background:#c62828;color:#fff;}
+.export-btn-pdf:hover{background:#8e0000;color:#fff;}
 .notif-panel{
-    display:none;
-    position:fixed;top:80px;right:30px;
-    width:360px;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:16px;
-    box-shadow:0 8px 40px rgba(0,0,0,0.2);
-    z-index:999;
-    max-height:480px;
-    overflow-y:auto;
+    display:none;position:fixed;top:80px;right:30px;width:360px;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.2);
+    z-index:999;max-height:480px;overflow-y:auto;
 }
 .notif-panel.show{display:block;}
 .notif-panel-header{
-    padding:16px 20px;
-    border-bottom:1px solid var(--border);
+    padding:16px 20px;border-bottom:1px solid var(--border);
     display:flex;align-items:center;justify-content:space-between;
 }
 .notif-panel-header h4{font-size:15px;font-weight:700;color:var(--text);}
 .notif-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);}
 .notif-item{
-    padding:14px 20px;
-    border-bottom:1px solid var(--border);
+    padding:14px 20px;border-bottom:1px solid var(--border);
     display:flex;gap:12px;align-items:flex-start;
 }
 .notif-item:last-child{border-bottom:none;}
-.notif-dot{
-    width:10px;height:10px;
-    border-radius:50%;
-    margin-top:4px;flex-shrink:0;
-}
+.notif-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;}
 .notif-dot.on{background:#e65100;}
 .notif-dot.off{background:#2e7d32;}
 .notif-dot.temp{background:#4facfe;}
 .notif-text{font-size:13px;color:var(--text);line-height:1.5;}
 .notif-time{font-size:11px;color:var(--text3);margin-top:3px;}
 .notif-empty{padding:30px;text-align:center;color:var(--text3);font-size:13px;}
-
-/* PAGE SECTIONS */
 .page-section{display:none;}
 .page-section.active{display:block;}
-
-/* STATUS DOT */
 .status-dot{
-    display:inline-block;width:8px;height:8px;
-    border-radius:50%;background:#40916c;
-    margin-right:6px;
-    animation:pulse 2s infinite;
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:#40916c;margin-right:6px;animation:pulse 2s infinite;
 }
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-
-/* FOOTER */
 .footer{margin-top:30px;text-align:center;color:var(--text3);font-size:12px;padding-top:20px;border-top:1px solid var(--border);}
-
 @media(max-width:768px){
     .sidebar{width:0;overflow:hidden;}
     .main{margin-left:0;}
@@ -330,7 +244,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-logo">
         <div class="logo-icon">🥬</div>
@@ -355,10 +268,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main">
 
-    <!-- TOP BAR -->
     <div class="topbar">
         <div class="topbar-left">
             <h1><span class="status-dot"></span>Live Monitor</h1>
@@ -373,7 +284,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
     </div>
 
-    <!-- NOTIFICATION PANEL -->
     <div class="notif-panel" id="notifPanel">
         <div class="notif-panel-header">
             <h4>🔔 Notifications</h4>
@@ -386,8 +296,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- DASHBOARD PAGE -->
     <div class="page-section active" id="page-dashboard">
-
-        <!-- CARDS -->
         <div class="cards">
             <div class="card">
                 <div class="card-icon temp">🌡️</div>
@@ -421,7 +329,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
             </div>
         </div>
 
-        <!-- GRAPH -->
         <div class="panel" style="margin-bottom:20px;">
             <div class="panel-header">
                 <h3>📈 Temperature & Humidity — Last 20 Readings</h3>
@@ -434,7 +341,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
             </div>
         </div>
 
-        <!-- LIVE DATA TABLE -->
         <div class="panel">
             <div class="panel-header">
                 <h3>📋 Live Data Feed</h3>
@@ -444,11 +350,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Temperature</th>
-                            <th>Humidity</th>
-                            <th>Fan Status</th>
-                            <th>Time (PHT)</th>
+                            <th>ID</th><th>Temperature</th><th>Humidity</th>
+                            <th>Fan Status</th><th>Time (PHT)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -489,9 +392,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <span>Last 20 readings</span>
             </div>
             <div class="panel-body">
-                <div class="chart-wrap">
-                    <canvas id="tempChart"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
             </div>
         </div>
         <div class="panel">
@@ -500,29 +401,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <span>Last 20 readings</span>
             </div>
             <div class="panel-body">
-                <div class="chart-wrap">
-                    <canvas id="humChart"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="humChart"></canvas></div>
             </div>
         </div>
     </div>
 
-    <!-- HISTORY PAGE -->
+    <!-- HISTORY PAGE — CSV + PDF buttons added here -->
     <div class="page-section" id="page-history">
         <div class="panel">
             <div class="panel-header">
                 <h3>🕐 24-Hour History</h3>
-                <span><?= count($history_rows); ?> records</span>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span style="font-size:12px;color:var(--text3);">
+                        <?= count($history_rows); ?> records
+                    </span>
+                    <a href="export_csv.php" class="export-btn export-btn-csv">
+                        📥 Download CSV
+                    </a>
+                    <a href="export_pdf.php" class="export-btn export-btn-pdf">
+                        📄 Download PDF
+                    </a>
+                </div>
             </div>
             <div style="overflow-x:auto;">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Temperature</th>
-                            <th>Humidity</th>
-                            <th>Fan Status</th>
-                            <th>Time (PHT)</th>
+                            <th>ID</th><th>Temperature</th><th>Humidity</th>
+                            <th>Fan Status</th><th>Time (PHT)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -559,7 +465,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </div>
 
 <script>
-// CHART DATA FROM PHP
 const labels = <?= json_encode($graph_labels); ?>;
 const temps  = <?= json_encode($graph_temps); ?>;
 const hums   = <?= json_encode($graph_hums); ?>;
@@ -574,7 +479,6 @@ const chartDefaults = {
     }
 };
 
-// MAIN CHART
 const mainCtx = document.getElementById('mainChart').getContext('2d');
 new Chart(mainCtx, {
     type:'line',
@@ -588,7 +492,6 @@ new Chart(mainCtx, {
     options:chartDefaults
 });
 
-// TEMP CHART
 const tempCtx = document.getElementById('tempChart').getContext('2d');
 new Chart(tempCtx, {
     type:'line',
@@ -599,7 +502,6 @@ new Chart(tempCtx, {
     options:chartDefaults
 });
 
-// HUM CHART
 const humCtx = document.getElementById('humChart').getContext('2d');
 new Chart(humCtx, {
     type:'line',
@@ -610,7 +512,6 @@ new Chart(humCtx, {
     options:chartDefaults
 });
 
-// DARK MODE
 if(localStorage.getItem('theme') === 'dark'){
     document.body.classList.add('dark');
     document.getElementById('themeBtn').textContent = '☀️ Light';
@@ -627,7 +528,6 @@ function toggleDark(){
     }
 }
 
-// NAVIGATION
 function showPage(page){
     document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -635,7 +535,6 @@ function showPage(page){
     document.getElementById('nav-'+page).classList.add('active');
 }
 
-// NOTIFICATIONS — check every 1 hour
 const notifications = JSON.parse(localStorage.getItem('notifs') || '[]');
 
 function addNotif(dot, text){
@@ -670,7 +569,6 @@ function checkAndNotify(){
     const temp = <?= isset($latest['temperature']) ? $latest['temperature'] : 0; ?>;
     const hum  = <?= isset($latest['humidity']) ? $latest['humidity'] : 0; ?>;
     const fan  = "<?= isset($latest['fan_status']) ? $latest['fan_status'] : 'N/A'; ?>";
-
     if(fan === "ON"){
         addNotif('on', `🌀 Fan is ON — Temperature reached ${temp}°C`);
     } else {
@@ -679,7 +577,6 @@ function checkAndNotify(){
     addNotif('temp', `📊 Status Update — Temp: ${temp}°C | Humidity: ${hum}%`);
 }
 
-// Run once on load + every 1 hour
 renderNotifs();
 const lastCheck = localStorage.getItem('lastNotifCheck');
 const now = Date.now();
@@ -692,7 +589,6 @@ setInterval(()=>{
     localStorage.setItem('lastNotifCheck', Date.now().toString());
 }, 3600000);
 
-// TOGGLE NOTIF PANEL
 function toggleNotif(){
     document.getElementById('notifPanel').classList.toggle('show');
 }
