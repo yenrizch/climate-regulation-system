@@ -32,13 +32,11 @@
 
 <h2>Climate Data History</h2>
 
-<!-- Export Buttons -->
 <div class="export-buttons">
     <a href="export_csv.php" class="btn-csv">Download CSV</a>
     <a href="export_pdf.php" class="btn-pdf">Download PDF</a>
 </div>
 
-<!-- Data Table -->
 <table>
     <thead>
         <tr>
@@ -63,7 +61,7 @@
                     <?= $row['fan_status'] ?>
                 </span>
             </td>
-            <td><?= $row['time'] ?></td>
+            <td><?= $row['time'] ?></td> <!-- ← fixed: was created_at -->
         </tr>
         <?php endwhile; ?>
     </tbody>
