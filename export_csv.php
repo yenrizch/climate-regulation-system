@@ -6,10 +6,8 @@ header('Content-Disposition: attachment; filename="climate_data_' . date('Y-m-d'
 
 $output = fopen('php://output', 'w');
 
-// Header row
 fputcsv($output, ['ID', 'Temperature (°C)', 'Humidity (%)', 'Fan Status', 'Date & Time']);
 
-// Fetch all data
 $stmt = $conn->query("SELECT id, temperature, humidity, fan_status, time FROM climate_data ORDER BY id DESC");
 
 while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -18,7 +16,7 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $row['temperature'],
         $row['humidity'],
         $row['fan_status'],
-        $row['time']
+        $row['time']   // ← fixed: was created_at
     ]);
 }
 
