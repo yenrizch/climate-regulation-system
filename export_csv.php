@@ -18,7 +18,7 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $row['temperature'],
         $row['humidity'],
         $row['fan_status'],
-        $row['created_at']
+        $row['time']
     ]);
 }
 
