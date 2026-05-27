@@ -2,7 +2,7 @@
 require 'config.php';
 
 // Fetch data first
-$stmt = $conn->query("SELECT id, temperature, humidity, fan_status, created_at FROM climate_data ORDER BY id DESC LIMIT 100");
+$stmt = $conn->query("SELECT id, temperature, humidity, fan_status, time FROM climate_data ORDER BY id DESC LIMIT 100");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Inline minimal FPDF-compatible PDF generator
@@ -50,7 +50,7 @@ foreach($rows as $row) {
     $pdf->Cell(55,  8, $row['temperature'],  1, 0, 'C', true);
     $pdf->Cell(55,  8, $row['humidity'],     1, 0, 'C', true);
     $pdf->Cell(55,  8, $row['fan_status'],   1, 0, 'C', true);
-    $pdf->Cell(90,  8, $row['created_at'],   1, 1, 'C', true);
+    $pdf->Cell(90,  8, $row['time'],   1, 1, 'C', true);
     $fill = !$fill;
 }
 
