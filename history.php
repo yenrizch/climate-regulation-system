@@ -63,7 +63,7 @@
                     <?= $row['fan_status'] ?>
                 </span>
             </td>
-            <td><?= $row['created_at'] ?></td>
+            <td><?= $row['time'] ?></td>
         </tr>
         <?php endwhile; ?>
     </tbody>
