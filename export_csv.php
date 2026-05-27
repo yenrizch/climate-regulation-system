@@ -10,7 +10,7 @@ $output = fopen('php://output', 'w');
 fputcsv($output, ['ID', 'Temperature (°C)', 'Humidity (%)', 'Fan Status', 'Date & Time']);
 
 // Fetch all data
-$stmt = $conn->query("SELECT id, temperature, humidity, fan_status, created_at FROM climate_data ORDER BY id DESC");
+$stmt = $conn->query("SELECT id, temperature, humidity, fan_status, time FROM climate_data ORDER BY id DESC");
 
 while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     fputcsv($output, [
