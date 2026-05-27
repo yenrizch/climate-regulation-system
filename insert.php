@@ -26,20 +26,17 @@ if(
         try {
             $mail = new PHPMailer(true);
 
-            // SMTP configuration
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = true;
             $mail->Username   = SMTP_USER;
             $mail->Password   = SMTP_PASS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail->Port       = SMTP_PORT;
 
-            // Sender and recipient
             $mail->setFrom(SMTP_USER, 'Climate Regulation System');
-            $mail->addAddress(SMTP_USER); // change to recipient email if different
+            $mail->addAddress(SMTP_NOTIFY);
 
-            // Email content
             $mail->isHTML(true);
             $mail->Subject = 'New Climate Data Recorded';
             $mail->Body    = "
@@ -56,7 +53,6 @@ if(
             $mail->send();
 
         } catch (Exception $e) {
-            // Email failed silently — data is already saved
             error_log("Mailer Error: " . $mail->ErrorInfo);
         }
         // --- END EMAIL NOTIFICATION ---
