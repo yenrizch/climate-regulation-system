@@ -240,6 +240,176 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     .main{margin-left:0;}
     .notif-panel{right:10px;width:calc(100vw - 20px);}
 }
+
+/* ── Optimal Lettuce Growing Conditions Panel ── */
+.optimal-panel {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.optimal-panel-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+}
+
+.optimal-panel-header .header-icon {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+}
+
+.optimal-panel-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.optimal-panel-header p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 1px;
+}
+
+.optimal-stages {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+}
+
+@media(max-width:900px){
+    .optimal-stages { grid-template-columns: repeat(2, 1fr); }
+}
+@media(max-width:500px){
+    .optimal-stages { grid-template-columns: 1fr; }
+}
+
+.stage-card {
+    padding: 20px 22px;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.2s;
+    cursor: default;
+}
+
+.stage-card:last-child { border-right: none; }
+
+.stage-card:hover { background: var(--bg3); }
+
+/* Colored top accent bar per stage */
+.stage-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0;
+}
+.stage-card.seedling::before   { background: linear-gradient(90deg, #a8edea, #4facfe); }
+.stage-card.vegetative::before { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+.stage-card.mature::before     { background: linear-gradient(90deg, #f9d423, #f83600); }
+.stage-card.harvest::before    { background: linear-gradient(90deg, #a18cd1, #fbc2eb); }
+
+.stage-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.stage-label.seedling   { color: #4facfe; }
+.stage-label.vegetative { color: #43e97b; }
+.stage-label.mature     { color: #f9a825; }
+.stage-label.harvest    { color: #a18cd1; }
+
+.stage-label .stage-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.stage-label.seedling   .stage-dot { background: #4facfe; }
+.stage-label.vegetative .stage-dot { background: #43e97b; }
+.stage-label.mature     .stage-dot { background: #f9a825; }
+.stage-label.harvest    .stage-dot { background: #a18cd1; }
+
+.stage-metric {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.stage-metric:last-child { margin-bottom: 0; }
+
+.stage-metric-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.stage-metric-icon.t { background: rgba(255,107,53,0.12); }
+.stage-metric-icon.h { background: rgba(79,172,254,0.12); }
+
+.stage-metric-info {}
+.stage-metric-info .metric-title {
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.stage-metric-info .metric-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+/* Live status indicator per stage */
+.stage-status {
+    margin-top: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.stage-status.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+.stage-status.inactive {
+    background: var(--bg3);
+    color: var(--text3);
+}
+body.dark .stage-status.active {
+    background: #0a2416;
+    color: #81c784;
+}
+.stage-status .status-pip {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.stage-status.active .status-pip  { background: #2e7d32; animation: pulse 2s infinite; }
+.stage-status.inactive .status-pip { background: var(--text3); }
 </style>
 </head>
 <body>
@@ -296,6 +466,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- DASHBOARD PAGE -->
     <div class="page-section active" id="page-dashboard">
+
+        <!-- Sensor cards -->
         <div class="cards">
             <div class="card">
                 <div class="card-icon temp">🌡️</div>
@@ -328,6 +500,148 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <div class="card-bar"></div>
             </div>
         </div>
+
+        <!-- ══════════════════════════════════════════════
+             OPTIMAL LETTUCE GROWING CONDITIONS PANEL
+             ══════════════════════════════════════════════ -->
+        <?php
+        $cur_temp = isset($latest['temperature']) ? floatval($latest['temperature']) : null;
+        $cur_hum  = isset($latest['humidity'])    ? floatval($latest['humidity'])    : null;
+
+        // Stage ranges: [temp_min, temp_max, hum_min, hum_max]
+        $stages = [
+            'seedling'   => [21, 24, 70, 90],
+            'vegetative' => [18, 21, 60, 70],
+            'mature'     => [16, 19, 55, 65],
+            'harvest'    => [21, 24, 70, 80],
+        ];
+        function isStageActive($temp, $hum, $range){
+            if($temp === null || $hum === null) return false;
+            return $temp >= $range[0] && $temp <= $range[1] && $hum >= $range[2] && $hum <= $range[3];
+        }
+        ?>
+
+        <div class="optimal-panel">
+            <div class="optimal-panel-header">
+                <div class="header-icon">🥬</div>
+                <div>
+                    <h3>Optimal Lettuce Growing Conditions</h3>
+                    <p>Reference ranges per growth stage — current readings highlighted</p>
+                </div>
+            </div>
+            <div class="optimal-stages">
+
+                <!-- Seedling Stage -->
+                <div class="stage-card seedling">
+                    <div class="stage-label seedling">
+                        <span class="stage-dot"></span>
+                        Seedling Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">21° – 24°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">70 – 90%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['seedling']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <!-- Vegetative Stage -->
+                <div class="stage-card vegetative">
+                    <div class="stage-label vegetative">
+                        <span class="stage-dot"></span>
+                        Vegetative Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">18° – 21°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">60 – 70%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['vegetative']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <!-- Mature Stage -->
+                <div class="stage-card mature">
+                    <div class="stage-label mature">
+                        <span class="stage-dot"></span>
+                        Mature Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">16° – 19°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">55 – 65%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['mature']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <!-- Harvest Stage -->
+                <div class="stage-card harvest">
+                    <div class="stage-label harvest">
+                        <span class="stage-dot"></span>
+                        Harvest Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">21° – 24°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">70 – 80%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['harvest']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+            </div><!-- /optimal-stages -->
+        </div><!-- /optimal-panel -->
+        <!-- ════════════════════════════════════════════ -->
 
         <div class="panel" style="margin-bottom:20px;">
             <div class="panel-header">
@@ -406,7 +720,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
     </div>
 
-    <!-- HISTORY PAGE — CSV + PDF buttons added here -->
+    <!-- HISTORY PAGE -->
     <div class="page-section" id="page-history">
         <div class="panel">
             <div class="panel-header">
@@ -497,7 +811,7 @@ new Chart(tempCtx, {
     type:'line',
     data:{
         labels:labels,
-        datasets:[{label:'Temperature (°C)',data:temps,borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#ff6b35',pointRadius:5,borderWidth:2}]
+        datasets:[{label:'Temperature (°C)',data:temps,borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#ff6b35',pointRadius:5,borderWidth:2}]
     },
     options:chartDefaults
 });
@@ -507,7 +821,7 @@ new Chart(humCtx, {
     type:'line',
     data:{
         labels:labels,
-        datasets:[{label:'Humidity (%)',data:hums,borderColor:'#4facfe',backgroundColor:'rgba(79,172,254,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4facfe',pointRadius:5,borderWidth:2}]
+        datasets:[{label:'Humidity (%)',data:hums,borderColor:'#4facfe',backgroundColor:'rgba(79,172,254,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#4facfe',pointRadius:5,borderWidth:2}]
     },
     options:chartDefaults
 });
