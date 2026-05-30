@@ -398,4 +398,486 @@ body.dark .stage-status.active {
         <h2>Lettuce Greenhouse</h2>
         <p>Climate Monitoring System</p>
     </div>
-    <nav class="sidebar-n
+    <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+            <span class="icon">📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showPage('graph')" id="nav-graph">
+            <span class="icon">📈</span> Graph
+        </div>
+        <div class="nav-item" onclick="showPage('history')" id="nav-history">
+            <span class="icon">🕐</span> History
+        </div>
+    </nav>
+    <div class="sidebar-bottom">
+        <a href="logout.php" class="logout-btn">
+            <span>🚪</span> Logout
+        </a>
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1><span class="status-dot"></span>Live Monitor</h1>
+            <p>Last updated: <?= date('F d, Y h:i:s A'); ?> PHT</p>
+        </div>
+        <div class="topbar-right">
+            <button class="notif-btn" onclick="toggleNotif()" id="notifBtn">
+                🔔 Notifications
+                <span class="notif-badge" id="notifCount">0</span>
+            </button>
+            <button class="theme-btn" onclick="toggleDark()" id="themeBtn">🌙 Dark</button>
+        </div>
+    </div>
+
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h4>🔔 Notifications</h4>
+            <button class="notif-close" onclick="toggleNotif()">✕</button>
+        </div>
+        <div id="notifList">
+            <div class="notif-empty">No notifications yet.<br>Checks every 1 hour.</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page-section active" id="page-dashboard">
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon temp">🌡️</div>
+                <div class="card-label">Temperature</div>
+                <div class="card-value"><?= isset($latest['temperature']) ? $latest['temperature'] : 'N/A'; ?>°C</div>
+                <div class="card-sub">Live greenhouse temp</div>
+                <div class="card-bar"></div>
+            </div>
+            <div class="card">
+                <div class="card-icon hum">💧</div>
+                <div class="card-label">Humidity</div>
+                <div class="card-value"><?= isset($latest['humidity']) ? $latest['humidity'] : 'N/A'; ?>%</div>
+                <div class="card-sub">Current air moisture</div>
+                <div class="card-bar"></div>
+            </div>
+            <div class="card">
+                <div class="card-icon fan">🌀</div>
+                <div class="card-label">Fan Status</div>
+                <div class="card-value <?= isset($latest['fan_status']) ? 'fan-'.strtolower($latest['fan_status']) : ''; ?>">
+                    <?= isset($latest['fan_status']) ? $latest['fan_status'] : 'N/A'; ?>
+                </div>
+                <div class="card-sub">Auto ventilation</div>
+                <div class="card-bar"></div>
+            </div>
+            <div class="card">
+                <div class="card-icon total">📦</div>
+                <div class="card-label">Total Records</div>
+                <div class="card-value"><?= $total['total']; ?></div>
+                <div class="card-sub">Database entries</div>
+                <div class="card-bar"></div>
+            </div>
+        </div>
+
+        <?php
+        $cur_temp = isset($latest['temperature']) ? floatval($latest['temperature']) : null;
+        $cur_hum  = isset($latest['humidity'])    ? floatval($latest['humidity'])    : null;
+
+        $stages = [
+            'seedling'   => [21, 24, 70, 90],
+            'vegetative' => [18, 21, 60, 70],
+            'mature'     => [16, 19, 55, 65],
+            'harvest'    => [21, 24, 70, 80],
+        ];
+        function isStageActive($temp, $hum, $range){
+            if($temp === null || $hum === null) return false;
+            return $temp >= $range[0] && $temp <= $range[1] && $hum >= $range[2] && $hum <= $range[3];
+        }
+        ?>
+
+        <div class="optimal-panel">
+            <div class="optimal-panel-header">
+                <div class="header-icon">🥬</div>
+                <div>
+                    <h3>Optimal Lettuce Growing Conditions</h3>
+                    <p>Reference ranges per growth stage — current readings highlighted</p>
+                </div>
+            </div>
+            <div class="optimal-stages">
+
+                <div class="stage-card seedling">
+                    <div class="stage-label seedling">
+                        <span class="stage-dot"></span>
+                        Seedling Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">21° – 24°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">70 – 90%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['seedling']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <div class="stage-card vegetative">
+                    <div class="stage-label vegetative">
+                        <span class="stage-dot"></span>
+                        Vegetative Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">18° – 21°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">60 – 70%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['vegetative']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <div class="stage-card mature">
+                    <div class="stage-label mature">
+                        <span class="stage-dot"></span>
+                        Mature Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">16° – 19°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">55 – 65%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['mature']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+                <div class="stage-card harvest">
+                    <div class="stage-label harvest">
+                        <span class="stage-dot"></span>
+                        Harvest Stage
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon t">🌡️</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Temperature</div>
+                            <div class="metric-value">21° – 24°C</div>
+                        </div>
+                    </div>
+                    <div class="stage-metric">
+                        <div class="stage-metric-icon h">💧</div>
+                        <div class="stage-metric-info">
+                            <div class="metric-title">Humidity</div>
+                            <div class="metric-value">70 – 80%</div>
+                        </div>
+                    </div>
+                    <?php $active = isStageActive($cur_temp, $cur_hum, $stages['harvest']); ?>
+                    <div class="stage-status <?= $active ? 'active' : 'inactive'; ?>">
+                        <span class="status-pip"></span>
+                        <?= $active ? '✓ Within range' : 'Out of range'; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+                <h3>📈 Temperature & Humidity — Last 20 Readings</h3>
+                <span>Auto-refresh every 10s</span>
+            </div>
+            <div class="panel-body">
+                <div class="chart-wrap">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>📋 Live Data Feed</h3>
+                <span>Latest 50 records</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Temperature</th><th>Humidity</th>
+                            <th>Fan Status</th><th>Time (PHT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(count($rows) > 0): ?>
+                            <?php foreach($rows as $row): ?>
+                            <tr>
+                                <td>#<?= $row['id']; ?></td>
+                                <td>🌡️ <?= $row['temperature']; ?> °C</td>
+                                <td>💧 <?= $row['humidity']; ?> %</td>
+                                <td>
+                                    <?php if($row['fan_status'] == "ON"): ?>
+                                        <span class='badge badge-on'>🌀 ON</span>
+                                    <?php else: ?>
+                                        <span class='badge badge-off'>⏹ OFF</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= date('M d, Y h:i:s A', strtotime($row['time']) + (8*3600)); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">
+                                    No data yet. Waiting for ESP32...
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAPH PAGE -->
+    <div class="page-section" id="page-graph">
+        <div class="panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+                <h3>🌡️ Temperature Trend</h3>
+                <span>Last 20 readings</span>
+            </div>
+            <div class="panel-body">
+                <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header">
+                <h3>💧 Humidity Trend</h3>
+                <span>Last 20 readings</span>
+            </div>
+            <div class="panel-body">
+                <div class="chart-wrap"><canvas id="humChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY PAGE -->
+    <div class="page-section" id="page-history">
+        <div class="panel">
+            <div class="panel-header">
+                <h3>🕐 24-Hour History</h3>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span style="font-size:12px;color:var(--text3);">
+                        <?= count($history_rows); ?> records
+                    </span>
+                    <a href="export_csv.php" class="export-btn export-btn-csv">
+                        📥 Download CSV
+                    </a>
+                </div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Temperature</th><th>Humidity</th>
+                            <th>Fan Status</th><th>Time (PHT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(count($history_rows) > 0): ?>
+                            <?php foreach($history_rows as $row): ?>
+                            <tr>
+                                <td>#<?= $row['id']; ?></td>
+                                <td>🌡️ <?= $row['temperature']; ?> °C</td>
+                                <td>💧 <?= $row['humidity']; ?> %</td>
+                                <td>
+                                    <?php if($row['fan_status'] == "ON"): ?>
+                                        <span class='badge badge-on'>🌀 ON</span>
+                                    <?php else: ?>
+                                        <span class='badge badge-off'>⏹ OFF</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= date('M d, Y h:i:s A', strtotime($row['time']) + (8*3600)); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">
+                                    No history in the last 24 hours.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">Lettuce Greenhouse Monitoring System © 2026 — PHT</div>
+</div>
+
+<script>
+const labels = <?= json_encode($graph_labels); ?>;
+const temps  = <?= json_encode($graph_temps); ?>;
+const hums   = <?= json_encode($graph_hums); ?>;
+
+const chartDefaults = {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{legend:{labels:{font:{family:'Inter',size:12},color:getComputedStyle(document.body).getPropertyValue('--text')}}},
+    scales:{
+        x:{ticks:{font:{family:'Inter',size:10},color:'#718096'},grid:{color:'rgba(0,0,0,0.05)'}},
+        y:{ticks:{font:{family:'Inter',size:10},color:'#718096'},grid:{color:'rgba(0,0,0,0.05)'}}
+    }
+};
+
+const mainCtx = document.getElementById('mainChart').getContext('2d');
+new Chart(mainCtx, {
+    type:'line',
+    data:{
+        labels:labels,
+        datasets:[
+            {label:'Temperature (°C)',data:temps,borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#ff6b35',pointRadius:4},
+            {label:'Humidity (%)',data:hums,borderColor:'#4facfe',backgroundColor:'rgba(79,172,254,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#4facfe',pointRadius:4}
+        ]
+    },
+    options:chartDefaults
+});
+
+const tempCtx = document.getElementById('tempChart').getContext('2d');
+new Chart(tempCtx, {
+    type:'line',
+    data:{
+        labels:labels,
+        datasets:[{label:'Temperature (°C)',data:temps,borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#ff6b35',pointRadius:5,borderWidth:2}]
+    },
+    options:chartDefaults
+});
+
+const humCtx = document.getElementById('humChart').getContext('2d');
+new Chart(humCtx, {
+    type:'line',
+    data:{
+        labels:labels,
+        datasets:[{label:'Humidity (%)',data:hums,borderColor:'#4facfe',backgroundColor:'rgba(79,172,254,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#4facfe',pointRadius:5,borderWidth:2}]
+    },
+    options:chartDefaults
+});
+
+if(localStorage.getItem('theme') === 'dark'){
+    document.body.classList.add('dark');
+    document.getElementById('themeBtn').textContent = '☀️ Light';
+}
+function toggleDark(){
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('themeBtn');
+    if(document.body.classList.contains('dark')){
+        btn.textContent = '☀️ Light';
+        localStorage.setItem('theme','dark');
+    } else {
+        btn.textContent = '🌙 Dark';
+        localStorage.setItem('theme','light');
+    }
+}
+
+function showPage(page){
+    document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    document.getElementById('nav-'+page).classList.add('active');
+}
+
+const notifications = JSON.parse(localStorage.getItem('notifs') || '[]');
+
+function addNotif(dot, text){
+    const time = new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',hour12:true});
+    notifications.unshift({dot, text, time});
+    if(notifications.length > 20) notifications.pop();
+    localStorage.setItem('notifs', JSON.stringify(notifications));
+    renderNotifs();
+}
+
+function renderNotifs(){
+    const list = document.getElementById('notifList');
+    const count = document.getElementById('notifCount');
+    if(notifications.length === 0){
+        list.innerHTML = '<div class="notif-empty">No notifications yet.<br>Checks every 1 hour.</div>';
+        count.textContent = '0';
+        return;
+    }
+    count.textContent = notifications.length > 9 ? '9+' : notifications.length;
+    list.innerHTML = notifications.map(n=>`
+        <div class="notif-item">
+            <div class="notif-dot ${n.dot}"></div>
+            <div>
+                <div class="notif-text">${n.text}</div>
+                <div class="notif-time">${n.time}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function checkAndNotify(){
+    const temp = <?= isset($latest['temperature']) ? $latest['temperature'] : 0; ?>;
+    const hum  = <?= isset($latest['humidity']) ? $latest['humidity'] : 0; ?>;
+    const fan  = "<?= isset($latest['fan_status']) ? $latest['fan_status'] : 'N/A'; ?>";
+    if(fan === "ON"){
+        addNotif('on', `🌀 Fan is ON — Temperature reached ${temp}°C`);
+    } else {
+        addNotif('off', `⏹ Fan is OFF — Temperature is ${temp}°C`);
+    }
+    addNotif('temp', `📊 Status Update — Temp: ${temp}°C | Humidity: ${hum}%`);
+}
+
+renderNotifs();
+const lastCheck = localStorage.getItem('lastNotifCheck');
+const now = Date.now();
+if(!lastCheck || (now - parseInt(lastCheck)) >= 3600000){
+    checkAndNotify();
+    localStorage.setItem('lastNotifCheck', now.toString());
+}
+setInterval(()=>{
+    checkAndNotify();
+    localStorage.setItem('lastNotifCheck', Date.now().toString());
+}, 3600000);
+
+function toggleNotif(){
+    document.getElementById('notifPanel').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+    const panel = document.getElementById('notifPanel');
+    const btn = document.getElementById('notifBtn');
+    if(!panel.contains(e.target) && !btn.contains(e.target)){
+        panel.classList.remove('show');
+    }
+});
+</script>
+</body>
+</html>
