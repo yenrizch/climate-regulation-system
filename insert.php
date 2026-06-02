@@ -52,7 +52,7 @@ if (
 
             // Sender
             $mail->setFrom(
-                'rizcathnova.com',
+                'rizcathnova@gmail.com',
                 'Climate-system'
             );
 
